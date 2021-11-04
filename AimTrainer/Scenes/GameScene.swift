@@ -32,7 +32,9 @@ class GameScene: SKScene {
         currentElapsedTime += delta
         if currentElapsedTime > 1 {
             time -= 1
-            updateTimeLabel()
+            if time >= 0 {
+                updateTimeLabel()
+            }
             currentElapsedTime = 0.0
         }
         updateTime = currentTime
