@@ -20,10 +20,9 @@
                                 <string key="text">Tutorial
 
 After touching the aim it moves to another random position. 
-Game finishes when you press the aim 10 times. 
-You win if you do it faster than 7 seconds.
-You lose if you are slower.
-</string>
+Game ﬁnishes when 7 seconds is over.
+You win if you press the aim 10 times and more. 🥳 
+Otherwise you lose. 🥲</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
