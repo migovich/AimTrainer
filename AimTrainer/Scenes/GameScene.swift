@@ -39,9 +39,7 @@ class GameScene: SKScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if !isGameStarted { return }
-        guard let touch = touches.first else {
-            return
-        }
+        guard let touch = touches.first else { return }
         let touchPosition = touch.location(in: self)
         let node = self.atPoint(touchPosition)
         if node.name == "aimNode" {
@@ -60,10 +58,10 @@ class GameScene: SKScene {
     }
     
     fileprivate func startGame() {
+        print("Game Started 🎯")
         self.isGameStarted = true
         self.gameTime = 7
         self.score = 0
-        
         spawnAim()
         configureTimer()
     }
