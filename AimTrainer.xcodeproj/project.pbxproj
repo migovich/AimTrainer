@@ -107,14 +107,6 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		CD3BBE98273452B500324653 /* Network */ = {
-			isa = PBXGroup;
-			children = (
-				CD3BBE99273452C900324653 /* GameOverLinks.swift */,
-			);
-			path = Network;
-			sourceTree = "<group>";
-		};
 		CDC0C3302733D87E005CA052 = {
 			isa = PBXGroup;
 			children = (
@@ -134,13 +126,13 @@
 		CDC0C33B2733D87E005CA052 /* AimTrainer */ = {
 			isa = PBXGroup;
 			children = (
-				CD3BBE98273452B500324653 /* Network */,
 				CDC0C33C2733D87E005CA052 /* AppDelegate.swift */,
 				CDC0C33E2733D87E005CA052 /* SceneDelegate.swift */,
+				CDF95E962734A0D2001B5162 /* Models */,
 				CD0E1F482734406600E02646 /* Managers */,
 				CDC0C35727340218005CA052 /* SpriteNodes */,
 				CDC0C355273401ED005CA052 /* Scenes */,
-				CDC0C35627340201005CA052 /* ViewController */,
+				CDC0C35627340201005CA052 /* ViewControllers */,
 				CD0E1F4B2734413A00E02646 /* Extensions */,
 				CDC0C354273401CA005CA052 /* Resources */,
 				CDC0C34A2733D882005CA052 /* Info.plist */,
@@ -167,14 +159,14 @@
 			path = Scenes;
 			sourceTree = "<group>";
 		};
-		CDC0C35627340201005CA052 /* ViewController */ = {
+		CDC0C35627340201005CA052 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
 				CD0E1F472734403000E02646 /* Game */,
 				CD0E1F462734401E00E02646 /* GameOver */,
 				CD0E1F452734401000E02646 /* Tutorial */,
 			);
-			path = ViewController;
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		CDC0C35727340218005CA052 /* SpriteNodes */ = {
@@ -184,6 +176,14 @@
 				CDC0C37D2734117E005CA052 /* Start.swift */,
 			);
 			path = SpriteNodes;
+			sourceTree = "<group>";
+		};
+		CDF95E962734A0D2001B5162 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CD3BBE99273452C900324653 /* GameOverLinks.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

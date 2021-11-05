@@ -9,41 +9,36 @@ import SpriteKit
 
 class GameScene: SKScene {
     
+    // MARK: Node properties
     private let scoreLabel = SKLabelNode()
     private let highscoreLabel = SKLabelNode()
     private let timeLabel = SKLabelNode()
     private var touchNode : SKShapeNode?
     
-    private var time: TimeInterval = 8.0
-    private var currentElapsedTime: TimeInterval = 0.0
-    private var updateTime: TimeInterval = 0.0
-    private var score: Int = 0
-    private var isGameOver: Bool = false
-    private let fontSize: CGFloat = 20.0
-    
+    // MARK: Stored properties
+    private var gameTime: Int = 7 {
+        didSet {
+            timeLabel.text = "Time: \(gameTime)"
+        }
+    }
+    private var score: Int = 0 {
+        didSet {
+            scoreLabel.text = "Score: \(score)"
+        }
+    }
+    private var isGameStarted: Bool = false
+
+    // MARK: Dependency properties
     private var networkManager = NetworkManager()
     
+    // MARK: Life Cycle
     override func didMove(to view: SKView) {
         configureStartScene()
-    }
-    
-    override func update(_ currentTime: TimeInterval) {
-        let delta = currentTime - updateTime
-        currentElapsedTime += delta
-        if currentElapsedTime > 1 {
-            time -= 1
-            if time >= 0 {
-                updateTimeLabel()
-            }
-            currentElapsedTime = 0.0
-        }
-        updateTime = currentTime
-        if time == 0, !isGameOver {
-            gameOver()
-        }
+        startGame()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if !isGameStarted { return }
         guard let touch = touches.first else {
             return
         }
@@ -53,35 +48,76 @@ class GameScene: SKScene {
             removeAim()
             spawnAim()
             score += 1
-            updateScoreLabel()
         }
         touchDown(atPoint: touch.location(in: self), isHit: node.name == "aimNode")
     }
     
     fileprivate func configureStartScene() {
         backgroundColor = .white
-        
         configureLabels()
         configureBar()
         configureTouchNode()
+    }
+    
+    fileprivate func startGame() {
+        self.isGameStarted = true
+        self.gameTime = 7
+        self.score = 0
+        
         spawnAim()
+        configureTimer()
+    }
+    
+    fileprivate func endGame() {
+        print("Game Over 👾")
+        self.isGameStarted = false
+        if score > GameManager.highscore() {
+            GameManager.setHighscore(score)
+        }
+        networkManager.fetchGameOverLinks()
+        networkManager.completion = { [weak self] gameOverLinks in
+            guard let self = self else { return }
+            let gameOverLink = self.score < 10 ? gameOverLinks.loser : gameOverLinks.winner
+            DispatchQueue.main.async {
+                self.postGameOverNotificaiton(with: gameOverLink)
+                self.showMenuScene()
+            }
+        }
+    }
+    
+    fileprivate func configureTimer() {
+        let wait = SKAction.wait(forDuration: 1)
+        let block = SKAction.run { [unowned self] in
+            if self.gameTime > 0 {
+                self.gameTime -= 1
+            } else {
+                self.removeAction(forKey: "countdown")
+                self.endGame()
+            }
+        }
+        let sequence = SKAction.sequence([wait, block])
+        run(SKAction.repeatForever(sequence), withKey: "countdown")
     }
     
     fileprivate func configureLabels() {
-        scoreLabel.text = "Score: \(score)"
+        let fontSize: CGFloat = 20.0
+        let fontColor: UIColor = .black
+        let alignment: SKLabelVerticalAlignmentMode = .center
+        
         scoreLabel.fontSize = fontSize
-        scoreLabel.fontColor = .black
-        scoreLabel.verticalAlignmentMode = .center
+        scoreLabel.fontColor = fontColor
+        scoreLabel.verticalAlignmentMode = alignment
+        scoreLabel.text = "Score: \(score)"
         
         highscoreLabel.fontSize = fontSize
-        highscoreLabel.fontColor = .black
-        highscoreLabel.verticalAlignmentMode = .center
+        highscoreLabel.fontColor = fontColor
+        highscoreLabel.verticalAlignmentMode = alignment
         highscoreLabel.text = "Highscore: \(GameManager.highscore())"
         
         timeLabel.fontSize = fontSize
-        timeLabel.fontColor = .black
-        timeLabel.verticalAlignmentMode = .center
-        timeLabel.text = "Time: \(time)"
+        timeLabel.fontColor = fontColor
+        timeLabel.verticalAlignmentMode = alignment
+        timeLabel.text = "Time: \(gameTime)"
     }
     
     fileprivate func configureBar() {
@@ -131,36 +167,11 @@ class GameScene: SKScene {
         run(removeAimSequence)
     }
     
-    fileprivate func updateScoreLabel() {
-        scoreLabel.text = "Score: \(score)"
-    }
-    
-    fileprivate func updateTimeLabel() {
-        timeLabel.text = "Time: \(time)"
-    }
-    
     fileprivate func touchDown(atPoint pos : CGPoint, isHit: Bool) {
         if let n = self.touchNode?.copy() as! SKShapeNode? {
             n.position = pos
             n.strokeColor = isHit ? SKColor.green : SKColor.red
             self.addChild(n)
-        }
-    }
-    
-    fileprivate func gameOver() {
-        print("Game Over 👾")
-        isGameOver = true
-        if score > GameManager.highscore() {
-            GameManager.setHighscore(score)
-        }
-        networkManager.fetchGameOverLinks()
-        networkManager.completion = { [weak self] gameOverLinks in
-            guard let self = self else { return }
-            let gameOverLink = self.score < 10 ? gameOverLinks.loser : gameOverLinks.winner
-            DispatchQueue.main.async {
-                self.postGameOverNotificaiton(with: gameOverLink)
-                self.showMenuScene()
-            }
         }
     }
     
